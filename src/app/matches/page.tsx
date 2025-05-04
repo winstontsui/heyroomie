@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import RoommateModal from '@/components/matches/RoommateModal';
+import { FaMapMarkerAlt, FaBriefcase } from 'react-icons/fa';
 
 interface MatchUser {
   id: string;
@@ -12,6 +14,7 @@ interface MatchUser {
   occupation?: string;
   neighborhood?: string;
   bio?: string;
+  profilePicture?: string;
   compatibility: {
     overallPercentage: number;
     categories: {
@@ -31,6 +34,8 @@ export default function Matches() {
   const [matches, setMatches] = useState<MatchUser[]>([]);
   const [error, setError] = useState('');
   const [profileCompleted, setProfileCompleted] = useState(true);
+  const [selectedMatch, setSelectedMatch] = useState<MatchUser | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Redirect if not logged in
   useEffect(() => {
@@ -118,120 +123,144 @@ export default function Matches() {
     );
   }
 
+  // Function to get profile picture URL
+  const getProfilePictureUrl = (profilePicture?: string) => {
+    if (!profilePicture || profilePicture === 'default') {
+      return '/images/defaults/default-avatar.svg';
+    }
+    return `/api/profile-picture/${profilePicture}`;
+  };
+
+  // Open modal with selected match
+  const openMatchDetails = (match: MatchUser) => {
+    setSelectedMatch(match);
+    setIsModalOpen(true);
+  };
+
+  // Close modal
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
   return (
-    <div className="bg-secondary-50 py-12 mt-20">
+    <div className="bg-light-50 py-12 mt-20">
       <div className="container-responsive">
-        <h1 className="text-3xl font-bold text-secondary-900 mb-2">Your Roommate Matches</h1>
-        <p className="text-lg text-secondary-600 mb-8">
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">Your Roommate Matches</h1>
+        <p className="text-lg text-gray-600 mb-8">
           Based on your preferences, we've found {matches.length} potential roommates for you.
         </p>
 
         {matches.length === 0 ? (
           <div className="bg-white rounded-xl shadow-md p-8 text-center">
             <h2 className="text-xl font-semibold mb-4">No matches found yet</h2>
-            <p className="text-secondary-600 mb-6">
+            <p className="text-gray-600 mb-6">
               We couldn't find any matches based on your current preferences. Try adjusting your preferences or check back later as more users join.
             </p>
-            <Link href="/profile" className="btn-primary px-6 py-3">
+            <Link href="/profile" className="btn-primary">
               Update Preferences
             </Link>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {matches.map((match) => (
-              <div key={match.id} className="bg-white rounded-xl shadow-md overflow-hidden">
-                <div className="p-6">
-                  <div className="flex justify-between items-start mb-4">
-                    <div>
-                      <h2 className="text-xl font-semibold text-secondary-900">{match.name}</h2>
-                      <div className="text-secondary-600 mt-1">
-                        {match.age && <span>{match.age} years old</span>}
-                        {match.age && match.occupation && <span> • </span>}
-                        {match.occupation && <span>{match.occupation}</span>}
-                      </div>
-                    </div>
-                    <div className={`rounded-full px-3 py-1 text-sm font-medium ${getCompatibilityColor(match.compatibility.overallPercentage)}`}>
+              <div 
+                key={match.id} 
+                className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 cursor-pointer"
+                onClick={() => openMatchDetails(match)}
+              >
+                <div className="relative h-48 overflow-hidden">
+                  <img 
+                    src={getProfilePictureUrl(match.profilePicture)}
+                    alt={`${match.name}'s profile`}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      e.currentTarget.src = '/images/defaults/default-avatar.svg';
+                    }}
+                  />
+                  <div className="absolute top-0 right-0 m-3">
+                    <div className={`px-3 py-1 rounded-full text-xs font-medium ${getCompatibilityColor(match.compatibility.overallPercentage)}`}>
                       {match.compatibility.overallPercentage}% Match
                     </div>
                   </div>
+                </div>
 
-                  {match.neighborhood && (
-                    <div className="mb-4">
-                      <div className="flex items-center text-secondary-700">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-secondary-500" viewBox="0 0 20 20" fill="currentColor">
-                          <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
-                        </svg>
+                <div className="p-5">
+                  <h2 className="text-xl font-semibold text-gray-900 mb-2">{match.name}</h2>
+                  
+                  <div className="flex flex-col space-y-2 mb-4">
+                    {match.age && (
+                      <div className="flex items-center text-gray-600 text-sm">
+                        <span className="w-6 h-6 rounded-full bg-light-100 flex items-center justify-center mr-2">
+                          <span className="text-xs font-medium">{match.age}</span>
+                        </span>
+                        <span>{match.age} years old</span>
+                      </div>
+                    )}
+
+                    {match.occupation && (
+                      <div className="flex items-center text-gray-600 text-sm">
+                        <FaBriefcase className="w-4 h-4 mr-2 text-gray-400" />
+                        <span>{match.occupation}</span>
+                      </div>
+                    )}
+
+                    {match.neighborhood && (
+                      <div className="flex items-center text-gray-600 text-sm">
+                        <FaMapMarkerAlt className="w-4 h-4 mr-2 text-gray-400" />
                         <span>{match.neighborhood}</span>
-                      </div>
-                    </div>
-                  )}
-
-                  {match.bio && (
-                    <div className="mb-4">
-                      <p className="text-secondary-700 text-sm line-clamp-3">{match.bio}</p>
-                    </div>
-                  )}
-
-                  <div className="border-t border-secondary-200 pt-4 mt-4">
-                    <h3 className="text-secondary-900 font-medium mb-2">Compatibility</h3>
-                    <div className="grid grid-cols-2 gap-2 mb-4">
-                      <div>
-                        <p className="text-xs text-secondary-500">Lifestyle</p>
-                        <div className="h-2 w-full bg-secondary-200 rounded-full overflow-hidden">
-                          <div 
-                            className="h-full bg-primary-500 rounded-full" 
-                            style={{ width: `${match.compatibility.categories.lifestyle}%` }}
-                          ></div>
-                        </div>
-                      </div>
-                      <div>
-                        <p className="text-xs text-secondary-500">Location</p>
-                        <div className="h-2 w-full bg-secondary-200 rounded-full overflow-hidden">
-                          <div 
-                            className="h-full bg-primary-500 rounded-full" 
-                            style={{ width: `${match.compatibility.categories.location}%` }}
-                          ></div>
-                        </div>
-                      </div>
-                      <div>
-                        <p className="text-xs text-secondary-500">Budget</p>
-                        <div className="h-2 w-full bg-secondary-200 rounded-full overflow-hidden">
-                          <div 
-                            className="h-full bg-primary-500 rounded-full" 
-                            style={{ width: `${match.compatibility.categories.financial}%` }}
-                          ></div>
-                        </div>
-                      </div>
-                      <div>
-                        <p className="text-xs text-secondary-500">Personal</p>
-                        <div className="h-2 w-full bg-secondary-200 rounded-full overflow-hidden">
-                          <div 
-                            className="h-full bg-primary-500 rounded-full" 
-                            style={{ width: `${match.compatibility.categories.personality}%` }}
-                          ></div>
-                        </div>
-                      </div>
-                    </div>
-
-                    {match.compatibility.matchingSummary.length > 0 && (
-                      <div className="text-xs text-secondary-700">
-                        <ul className="list-disc list-inside space-y-1">
-                          {match.compatibility.matchingSummary.map((reason, index) => (
-                            <li key={index}>{reason}</li>
-                          ))}
-                        </ul>
                       </div>
                     )}
                   </div>
 
-                  <div className="mt-4">
-                    <button className="btn-primary w-full">Message</button>
+                  {match.bio && (
+                    <div className="mb-4">
+                      <p className="text-gray-700 text-sm line-clamp-2">{match.bio}</p>
+                    </div>
+                  )}
+
+                  <div className="border-t border-gray-200 pt-4 mt-4">
+                    <div className="flex justify-between mb-2">
+                      <div className="flex space-x-2">
+                        <div className="w-8 h-2 bg-gray-200 rounded-full overflow-hidden">
+                          <div 
+                            className="h-full bg-gold-500 rounded-full" 
+                            style={{ width: `${match.compatibility.categories.lifestyle}%` }}
+                          ></div>
+                        </div>
+                        <div className="w-8 h-2 bg-gray-200 rounded-full overflow-hidden">
+                          <div 
+                            className="h-full bg-gold-500 rounded-full" 
+                            style={{ width: `${match.compatibility.categories.location}%` }}
+                          ></div>
+                        </div>
+                        <div className="w-8 h-2 bg-gray-200 rounded-full overflow-hidden">
+                          <div 
+                            className="h-full bg-gold-500 rounded-full" 
+                            style={{ width: `${match.compatibility.categories.financial}%` }}
+                          ></div>
+                        </div>
+                        <div className="w-8 h-2 bg-gray-200 rounded-full overflow-hidden">
+                          <div 
+                            className="h-full bg-gold-500 rounded-full" 
+                            style={{ width: `${match.compatibility.categories.personality}%` }}
+                          ></div>
+                        </div>
+                      </div>
+                      <span className="text-xs text-gray-500">View Details</span>
+                    </div>
                   </div>
                 </div>
               </div>
             ))}
           </div>
         )}
+
+        {/* Roommate Modal */}
+        <RoommateModal 
+          match={selectedMatch} 
+          isOpen={isModalOpen} 
+          onClose={closeModal} 
+        />
       </div>
     </div>
   );

@@ -315,6 +315,7 @@ export async function GET(req: NextRequest) {
         occupation: match.occupation,
         neighborhood: match.neighborhood,
         bio: match.bio,
+        profilePicture: match.profilePicture || 'default',
         compatibility,
       };
     });

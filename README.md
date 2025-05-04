@@ -318,7 +318,15 @@ This project meets the following requirements:
 Possible improvements to consider:
 
 1. **Messaging System** - Add direct communication between matched users
-2. **Profile Photos** - Allow users to upload and display photos
+2. ~~**Profile Photos**~~ ✅ **IMPLEMENTED!** - Users can now upload and display profile pictures
 3. **Advanced Filtering** - Let users filter matches by specific criteria
 4. **Notifications** - Alert users of new matches or messages
 5. **Social Login** - Add Google, Facebook login options
+
+
+**Files:**
+- `/src/app/api/upload/profile-picture/route.ts` - Handles profile picture uploads
+- `/src/app/api/profile-picture/[id]/route.ts` - Serves profile pictures from MongoDB
+- `/src/components/profile/ProfilePictureUpload.tsx` - UI component for image uploads
+- `/src/app/matches/page.tsx` - Redesigned matches page with profile pictures
+- `/src/components/matches/RoommateModal.tsx` - New interactive modal component
