@@ -13,6 +13,9 @@ if (!cached) {
   cached = global.mongoose = { conn: null, promise: null };
 }
 
+cached = cached!; // Ensure cached is not undefined for TypeScript
+
+
 async function dbConnect() {
   if (cached.conn) {
     return cached.conn;
