@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import dynamic from 'next/dynamic';
@@ -36,7 +36,7 @@ interface ProfileFormData {
   };
 }
 
-export default function Profile() {
+function ProfileContent() {
   const { data: session, status } = useSession();
   // Cast session user to extended type if needed
   const user = session?.user as ExtendedUser | undefined;
@@ -262,7 +262,7 @@ export default function Profile() {
     if (e && !skipPrevent) {
       e.preventDefault();
     }
-    
+
     // Convert string values to numbers where needed
     const dataToSend = {
       ...formData,
@@ -688,5 +688,13 @@ export default function Profile() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function Profile() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ProfileContent />
+    </Suspense>
   );
 }
