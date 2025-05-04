@@ -79,6 +79,7 @@ A modern web application for matching young professionals looking for roommates 
 - `/src/app/login/page.tsx` - Login page
 - `/src/app/signup/page.tsx` - Signup page
 - `/src/components/auth/SessionProvider.tsx` - Session provider wrapper
+- `/src/components/auth/LoginModal.tsx` - Enhanced modal login component
 
 **Features:**
 - User registration with email/password
@@ -86,8 +87,26 @@ A modern web application for matching young professionals looking for roommates 
 - Password hashing using bcrypt
 - JWT session management
 - Protected routes redirecting to login
+- Automatic login after registration
+- Streamlined user flow from signup to onboarding
 
-### 3. User Profile & Preferences (`/src/app/profile/page.tsx`)
+### 3. User Onboarding
+
+**Files:**
+- `/src/components/onboarding/PreferenceQuiz.tsx` - Interactive preference quiz
+- `/src/app/signup/page.tsx` - Signup page with redirection logic
+- `/src/app/profile/page.tsx` - Profile detection for new users
+
+**Features:**
+- Streamlined onboarding flow for new users
+- Interactive quiz that collects essential profile information
+- Visual neighborhood selection with images
+- Seamless transition from signup to profile completion
+- Automatic detection of first-time users
+- Direct saving of quiz responses to user profile
+- User-friendly form controls with appropriate validation
+
+### 4. User Profile & Preferences (`/src/app/profile/page.tsx`)
 
 **Files:**
 - `/src/app/profile/page.tsx` - Enhanced profile form UI with improved validation

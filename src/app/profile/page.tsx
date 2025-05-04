@@ -202,17 +202,23 @@ export default function Profile() {
     const { name, value } = e.target;
     
     if (name.includes('.')) {
-      // Handle nested properties like 'budget.min' or 'preferences.sleepSchedule'
       const [parent, child] = name.split('.');
-      setFormData(prev => ({
-        ...prev,
-        [parent]: {
-          ...prev[parent as keyof ProfileFormData],
-          [child]: value
+      setFormData(prev => {
+        const parentKey = parent as keyof ProfileFormData;
+        const parentValue = prev[parentKey];
+        
+        if (parentValue && typeof parentValue === 'object') {
+          return {
+            ...prev,
+            [parent]: {
+              ...parentValue,
+              [child]: value
+            }
+          };
         }
-      }));
+        return prev;
+      });
     } else {
-      // Handle top-level properties
       setFormData(prev => ({
         ...prev,
         [name]: value
@@ -226,13 +232,23 @@ export default function Profile() {
     if (name.includes('.')) {
       // Handle nested properties
       const [parent, child] = name.split('.');
-      setFormData(prev => ({
-        ...prev,
-        [parent]: {
-          ...prev[parent as keyof ProfileFormData],
-          [child]: checked
+      setFormData(prev => {
+        // Type safe way to handle nested properties
+        const parentKey = parent as keyof ProfileFormData;
+        const parentValue = prev[parentKey];
+        
+        // Ensure we're only spreading objects
+        if (parentValue && typeof parentValue === 'object') {
+          return {
+            ...prev,
+            [parent]: {
+              ...parentValue,
+              [child]: checked
+            }
+          };
         }
-      }));
+        return prev;
+      });
     } else {
       // Handle top-level properties
       setFormData(prev => ({
