@@ -7,16 +7,13 @@ declare global {
 
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/heyroomie';
 
-let cached = global.mongoose;
-
-if (!cached) {
-  cached = global.mongoose = { conn: null, promise: null };
-}
-
-cached = cached!; // Ensure cached is not undefined for TypeScript
-
-
 async function dbConnect() {
+  // Always initialize cache inside the function
+  let cached = global.mongoose;
+  if (!cached) {
+    cached = global.mongoose = { conn: null, promise: null };
+  }
+
   if (cached.conn) {
     return cached.conn;
   }
