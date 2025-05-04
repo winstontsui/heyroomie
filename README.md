@@ -163,17 +163,6 @@ A modern web application for matching young professionals looking for roommates 
 - Context-aware links (different for logged in/out users)
 - Persistent authentication state across pages
 
-## 🚀 Recent Updates
-
-- **Enhanced Quiz Functionality**: Added questions for name, age, occupation, and gender
-- **Improved Neighborhood Selection**: Now allows only one choice with visual neighborhood options
-- **Redesigned UI**: Switched from dark theme to light theme with gold-to-teal gradients
-- **Profile Enhancements**: Improved profile page with better validation and error handling
-- **User Onboarding**: Streamlined signup process with automatic login and quiz redirection
-- **Error Handling**: Implemented user-friendly error messages during profile validation
-- **Visual Improvements**: Added neighborhood images for better visual engagement
-- **Automatic Profile Update**: Quiz responses automatically save to user profile
-- **Code Optimization**: Fixed JSX structure issues and improved code organization
 
 ## 🔐 Authentication Flow
 
