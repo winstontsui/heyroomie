@@ -10,6 +10,9 @@ export interface IUser extends Document {
   gender?: string;
   occupation?: string;
   neighborhood?: string;
+  profilePicture?: string;
+  profilePictureData?: string; // Base64 encoded image data
+  profilePictureType?: string; // MIME type of the image
   budget?: {
     min: number;
     max: number;
@@ -69,6 +72,17 @@ const UserSchema: Schema = new Schema(
     },
     neighborhood: {
       type: String,
+    },
+    profilePicture: {
+      type: String,
+      default: 'default',
+    },
+    profilePictureData: {
+      type: String, // Base64 encoded image data
+    },
+    profilePictureType: {
+      type: String, // MIME type of the image
+      default: 'image/png',
     },
     budget: {
       min: {

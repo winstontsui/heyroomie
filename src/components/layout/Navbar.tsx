@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { signOut, useSession } from 'next-auth/react';
 import { useState, useEffect, createContext, useContext } from 'react';
+import Image from 'next/image';
 
 // Create a context for the login modal
 export const LoginModalContext = createContext({
@@ -16,6 +17,7 @@ export default function Navbar() {
   const router = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [profilePicture, setProfilePicture] = useState('default');
   
   // Check if we're on the home page to handle login differently
   const isHomePage = pathname === '/';
@@ -33,6 +35,32 @@ export default function Navbar() {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+  
+  // Fetch user profile picture when session is loaded
+  useEffect(() => {
+    const fetchProfilePicture = async () => {
+      if (session?.user?.email) {
+        try {
+          const response = await fetch('/api/profile');
+          if (response.ok) {
+            const data = await response.json();
+            if (data.profilePicture && data.profilePicture !== 'default') {
+              setProfilePicture(data.profilePicture);
+            } else {
+              // Just use the static default image
+              setProfilePicture('default');
+            }
+          }
+        } catch (error) {
+          // On any error, just use the default image
+          console.error('Error fetching profile picture:', error);
+          setProfilePicture('default');
+        }
+      }
+    };
+    
+    fetchProfilePicture();
+  }, [session]);
 
   const isActive = (path: string) => {
     return pathname === path ? 'text-gold-500 font-semibold' : 'nav-link';
@@ -61,6 +89,18 @@ export default function Navbar() {
               <div className="flex items-center space-x-4">
                 <div className="relative group">
                   <button className={`flex items-center ${shouldUseWhiteText ? 'text-white hover:text-gold-200' : 'nav-link'}`}>
+                    {/* Profile Picture */}
+                    <div className="w-8 h-8 rounded-full overflow-hidden mr-2 border border-light-300">
+                      <img 
+                        src={profilePicture === 'default' ? '/images/defaults/default-avatar.svg' : `/api/profile-picture/${profilePicture}`}
+                        alt="Profile"
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          // Simple fallback
+                          e.currentTarget.src = '/images/defaults/default-avatar.svg';
+                        }}
+                      />
+                    </div>
                     <span className="mr-1">MY ACCOUNT</span>
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -151,6 +191,21 @@ export default function Navbar() {
             {session ? (
               <>
                 <div className="h-px bg-dark-600 my-2"></div>
+                <div className="flex items-center space-x-3 mb-2">
+                  {/* Profile Picture in mobile menu */}
+                  <div className="w-10 h-10 rounded-full overflow-hidden border border-light-300">
+                    <img 
+                      src={profilePicture === 'default' ? '/images/defaults/default-avatar.svg' : `/api/profile-picture/${profilePicture}`}
+                      alt="Profile"
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        // Simple fallback
+                        e.currentTarget.src = '/images/defaults/default-avatar.svg';
+                      }}
+                    />
+                  </div>
+                  <span className="font-medium text-light-800">{session.user?.name || 'My Account'}</span>
+                </div>
                 <Link href="/dashboard" className="nav-link py-2">
                   Dashboard
                 </Link>

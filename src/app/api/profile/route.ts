@@ -26,17 +26,23 @@ export async function GET(req: NextRequest) {
       );
     }
 
+    // User found, prepare response data
+    
     // Return user data without sensitive fields
-    return NextResponse.json({
+    const userData = {
       name: user.name,
       bio: user.bio,
       age: user.age,
       gender: user.gender,
       occupation: user.occupation,
       neighborhood: user.neighborhood,
+      profilePicture: user.profilePicture || 'default',
       budget: user.budget,
       preferences: user.preferences,
-    });
+    };
+    
+    // Return the user data
+    return NextResponse.json(userData);
   } catch (error: any) {
     console.error('Error getting profile:', error);
     return NextResponse.json(
@@ -114,6 +120,17 @@ export async function POST(req: NextRequest) {
     user.gender = data.gender;
     user.occupation = data.occupation;
     user.neighborhood = data.neighborhood;
+    
+    // Handle profile picture - always preserve it
+    // If the request includes a profile picture, use it
+    // Otherwise, keep the existing one (don't set to undefined)
+    if (data.profilePicture) {
+      user.set('profilePicture', data.profilePicture);
+    } else if (user.profilePicture) {
+      // Keep the existing profile picture (do nothing)
+    } else {
+      user.set('profilePicture', 'default');
+    }
 
     // Update budget
     if (data.budget) {

@@ -21,6 +21,7 @@ export type QuizQuestion = {
   maxSelections?: number;
   placeholder?: string;
   maxLength?: number;
+  isOptional?: boolean;
 };
 
 // Define our answer types for better type safety
@@ -42,6 +43,7 @@ export interface QuizAnswers {
   guests?: string;
   noise?: string;
   bio?: string;
+  profilePicture?: string;
 }
 
 // Quiz questions with fun, interactive elements
@@ -206,6 +208,14 @@ export const quizQuestions: QuizQuestion[] = [
     placeholder: "I'm a marketing professional who loves cooking, film, and weekend hikes. Looking for a friendly, respectful roommate who enjoys occasional movie nights but also values quiet time.",
     key: 'bio',
     maxLength: 400,
+  },
+  {
+    id: 'profile-picture',
+    type: 'profile-picture',
+    title: 'Add a profile picture',
+    description: 'Show roommates who you are (optional)',
+    key: 'profilePicture',
+    isOptional: true,
   },
   {
     id: 'final',

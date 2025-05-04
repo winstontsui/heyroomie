@@ -7,6 +7,7 @@ import { IoIosCheckmarkCircle } from 'react-icons/io';
 // Import quiz questions from data file
 import { quizQuestions, QuestionOption } from '@/data/quizQuestions';
 import { useQuizState } from '@/hooks/useQuizState';
+import ProfilePictureUpload from '../profile/ProfilePictureUpload';
 
 interface PreferenceQuizProps {
   onComplete: (profileData: any) => void;
@@ -365,6 +366,21 @@ export default function PreferenceQuiz({ onComplete }: PreferenceQuizProps) {
           </div>
         );
 
+      case 'profile-picture':
+        return (
+          <div className="flex flex-col items-center py-4">
+            <ProfilePictureUpload 
+              onImageUploaded={(imageUrl) => {
+                if (question.key) {
+                  handleChange(question.key, imageUrl);
+                }
+              }}
+              isOptional={question.isOptional}
+              currentImage={question.key && answers[question.key] ? answers[question.key] as string : 'default'}
+            />
+          </div>
+        );
+
       default:
         return null;
     }
@@ -372,7 +388,7 @@ export default function PreferenceQuiz({ onComplete }: PreferenceQuizProps) {
 
   // QuizUI Component - Better semantics with a clear separation of concerns
   return (
-    <div className="bg-light-100 min-h-screen py-10">
+    <div className="bg-light-100 min-h-screen pt-24 pb-10">  {/* Increased top padding to prevent navbar overlap */}
       <div className="container max-w-4xl mx-auto">
         {/* Progress bar */}
         <ProgressBar 

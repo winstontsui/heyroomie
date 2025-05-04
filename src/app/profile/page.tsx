@@ -21,6 +21,7 @@ interface ProfileFormData {
   gender: string;
   occupation: string;
   neighborhood: string;
+  profilePicture?: string;
   budget: {
     min: string;
     max: string;
@@ -99,18 +100,23 @@ function ProfileContent() {
                             !formData.preferences.sleepSchedule;
       
       if (isProfileEmpty && !isNewUser) {
-        console.log("First time user detected, showing quiz");
         setIsFirstTimeUser(true);
         setShowQuiz(true);
       }
     }
   }, [loading, formData, isNewUser]);
+  
+  // Monitor profile picture changes
+  useEffect(() => {
+    // Update UI when profile picture changes
+  }, [formData.profilePicture]);
 
   const fetchUserProfile = async () => {
     try {
       const response = await fetch(`/api/profile`);
       if (response.ok) {
         const data = await response.json();
+        
         // Fill the form with existing data
         setFormData({
           name: data.name || '',
@@ -119,6 +125,7 @@ function ProfileContent() {
           gender: data.gender || '',
           occupation: data.occupation || '',
           neighborhood: data.neighborhood || '',
+          profilePicture: data.profilePicture || 'default',
           budget: {
             min: data.budget?.min?.toString() || '',
             max: data.budget?.max?.toString() || '',
@@ -179,7 +186,6 @@ function ProfileContent() {
           } else {
             setMessage({ type: 'error', text: data.error || 'Failed to save preferences. Please try again.' });
           }
-          console.error('Profile save errors:', data);
         }
       } catch (error) {
         console.error('Error saving profile:', error);
@@ -258,66 +264,77 @@ function ProfileContent() {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent | null, skipPrevent = false) => {
+  // Reusable function to save profile data to the server
+  const saveProfile = async (profileData: any) => {
+    // Convert string values to numbers where needed
+    const dataToSend = {
+      ...profileData,
+      // Explicitly include profilePicture to ensure it's not lost
+      profilePicture: profileData.profilePicture || 'default',
+      age: profileData.age ? parseInt(profileData.age) : undefined,
+      budget: {
+        min: profileData.budget.min ? parseInt(profileData.budget.min) : undefined,
+        max: profileData.budget.max ? parseInt(profileData.budget.max) : undefined,
+      },
+      preferences: {
+        ...profileData.preferences,
+        cleanliness: profileData.preferences.cleanliness ? parseInt(profileData.preferences.cleanliness) : undefined,
+      },
+    };
+    
+    try {
+      const response = await fetch('/api/profile', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(dataToSend),
+      });
+      
+      return await response.json();
+    } catch (error) {
+      console.error('Error saving profile:', error);
+      throw error;
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent | null, skipPrevent = false) => {
     if (e && !skipPrevent) {
       e.preventDefault();
     }
 
-    // Convert string values to numbers where needed
-    const dataToSend = {
-      ...formData,
-      age: formData.age ? parseInt(formData.age) : undefined,
-      budget: {
-        min: formData.budget.min ? parseInt(formData.budget.min) : undefined,
-        max: formData.budget.max ? parseInt(formData.budget.max) : undefined,
-      },
-      preferences: {
-        ...formData.preferences,
-        cleanliness: formData.preferences.cleanliness ? parseInt(formData.preferences.cleanliness) : undefined,
-      }
-    };
-    
     setSaving(true);
-    
-    fetch('/api/profile', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(dataToSend),
-    })
-    .then(response => response.json())
-    .then(data => {
+    setMessage({ type: '', text: '' });
+
+    try {
+      const data = await saveProfile(formData);
+      
       setSaving(false);
       
       if (data.success) {
         setMessage({ type: 'success', text: 'Profile updated successfully!' });
-        // Update the URL if this was a new user that just finished setting up their profile
-        if (isNewUser) {
-          router.replace('/profile');
-        }
+        
+        // Refresh user data to ensure we have the latest
+        fetchUserProfile();
+        
+        // Clear success message after a delay
+        setTimeout(() => {
+          setMessage({ type: '', text: '' });
+        }, 3000);
       } else {
-        // Show specific validation errors if available
-        if (data.validationErrors) {
-          const errorMessages = Object.values(data.validationErrors).join(', ');
+        // Handle validation errors
+        if (data.errors && Array.isArray(data.errors)) {
+          const errorMessages = data.errors.map((err: any) => err.message).join(', ');
           setMessage({ type: 'error', text: errorMessages });
         } else {
           setMessage({ type: 'error', text: data.error || 'Failed to update profile' });
         }
       }
-      
-      // Clear success message after a delay
-      if (data.success) {
-        setTimeout(() => {
-          setMessage({ type: '', text: '' });
-        }, 3000);
-      }
-    })
-    .catch(error => {
-      console.error('Error saving profile:', error);
+    } catch (error) {
+      console.error('Error in handleSubmit:', error);
       setSaving(false);
       setMessage({ type: 'error', text: 'An error occurred while saving' });
-    });
+    }
   };
 
   if (status === 'loading' || loading) {
@@ -388,6 +405,85 @@ function ProfileContent() {
               {/* Personal Information Section */}
               <div>
                 <h2 className="text-xl font-semibold mb-4 text-light-900 border-b pb-2">Personal Information</h2>
+                
+                {/* Profile Picture - More Prominent */}
+                <div className="mb-10 flex flex-col items-center">
+                  <div className="relative w-48 h-48 rounded-full overflow-hidden border-4 border-gold-400 shadow-xl mb-4 group">
+                    {/* Console logs moved to useEffect */}
+                    <img 
+                      src={formData.profilePicture ? `/api/profile-picture/${formData.profilePicture}` : `/api/profile-picture/default`} 
+                      alt="Profile" 
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        console.error('Error loading profile picture:', e);
+                        // Fallback to default if the image fails to load
+                        e.currentTarget.src = '/api/profile-picture/default';
+                      }}
+                    />
+                    <button 
+                      type="button"
+                      onClick={() => {
+                        const fileInput = document.createElement('input');
+                        fileInput.type = 'file';
+                        fileInput.accept = 'image/jpeg, image/png, image/webp, image/gif';
+                        fileInput.onchange = async (e) => {
+                          const target = e.target as HTMLInputElement;
+                          const file = target.files?.[0];
+                          if (!file) return;
+                          
+                          // Create form data for API call
+                          const formData = new FormData();
+                          formData.append('file', file);
+                          
+                          // Show uploading state
+                          setMessage({ type: 'loading', text: 'Uploading profile picture...' });
+                          
+                          try {
+                            // Call API to upload the image
+                            const response = await fetch('/api/upload/profile-picture', {
+                              method: 'POST',
+                              body: formData,
+                            });
+                            
+                            if (!response.ok) {
+                              const errorData = await response.json();
+                              throw new Error(errorData.error || 'Failed to upload image');
+                            }
+                            
+                            const data = await response.json();
+                            
+                            // Update form data with new profile picture
+                            setFormData(prev => ({
+                              ...prev,
+                              profilePicture: data.profilePicture
+                            }));
+                            
+                            // No need to save the entire profile - the API already updated the profilePicture field
+                            // Just update our local state
+                            
+                            setMessage({ type: 'success', text: 'Profile picture updated and saved!' });
+                            
+                            // Clear message after a delay
+                            setTimeout(() => setMessage({ type: '', text: '' }), 3000);
+                            
+                          } catch (error) {
+                            console.error('Error uploading profile picture:', error);
+                            setMessage({ type: 'error', text: 'Failed to upload profile picture. Please try again.' });
+                          }
+                        };
+                        fileInput.click();
+                      }}
+                      className="absolute inset-0 bg-light-900/50 opacity-0 group-hover:opacity-100 flex items-center justify-center text-white font-medium transition-opacity"
+                    >
+                      <div className="bg-gold-500 px-4 py-2 rounded-full shadow-md">
+                        Change Photo
+                      </div>
+                    </button>
+                  </div>
+                  <h3 className="text-xl font-semibold text-light-900">{formData.name}</h3>
+                  <p className="text-light-600">{formData.occupation}</p>
+                  <p className="text-sm text-light-500 mt-2">Profile photos help potential roommates recognize you</p>
+                </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
