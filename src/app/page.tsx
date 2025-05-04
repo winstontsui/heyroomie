@@ -7,39 +7,64 @@ import { BsArrowRight, BsChatDots, BsShieldLockFill, BsHouseFill, BsStarFill, Bs
 import { AiOutlineUser, AiOutlineCheckCircle } from 'react-icons/ai';
 import { IoLocationOutline } from 'react-icons/io5';
 import LoginModal from '@/components/auth/LoginModal';
+import SignupModal from '@/components/auth/SignupModal';
 
 export default function Home() {
   const [loginModalOpen, setLoginModalOpen] = useState(false);
+  const [signupModalOpen, setSignupModalOpen] = useState(false);
   
-  // Add event listener for opening login modal from navbar
+  // Add event listeners for opening modals from navbar
   useEffect(() => {
     const handleOpenLoginModal = () => setLoginModalOpen(true);
+    const handleOpenSignupModal = () => setSignupModalOpen(true);
+    
     window.addEventListener('open-login-modal', handleOpenLoginModal);
+    window.addEventListener('open-signup-modal', handleOpenSignupModal);
     
     return () => {
       window.removeEventListener('open-login-modal', handleOpenLoginModal);
+      window.removeEventListener('open-signup-modal', handleOpenSignupModal);
     };
   }, []);
 
   return (
     <main className="bg-light-50 text-light-900 overflow-hidden">
-      {/* Login Modal */}
+      {/* Authentication Modals */}
       <LoginModal 
         isOpen={loginModalOpen} 
         onClose={() => setLoginModalOpen(false)} 
       />
-      {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center">
-        {/* Background with gradient overlay */}
-        <div className="absolute inset-0 z-0 overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-r from-gold-500/10 to-teal-500/10"></div>
-          {/* Light background overlay */}
-          <div className="absolute inset-0 bg-light-50/80"></div>
-          {/* NYC skyline silhouette at bottom */}
-          <div className="absolute bottom-0 left-0 right-0 h-32 bg-light-100 opacity-80"></div>
+      <SignupModal
+        isOpen={signupModalOpen}
+        onClose={() => setSignupModalOpen(false)}
+      />
+      {/* Hero Section - Full Screen */}
+      <section className="relative h-screen flex items-center justify-center overflow-hidden">
+        {/* Full-screen background image */}
+        <div className="absolute inset-0 z-0">
+          <Image 
+            src="/images/roommates-nyc.png" 
+            alt="Roommates in NYC" 
+            fill 
+            className="object-cover" 
+            priority
+          />
+          {/* Gradient overlay for better text visibility */}
+          <div className="absolute inset-0 bg-gradient-to-b from-dark-900/40 via-dark-900/20 to-dark-900/60"></div>
         </div>
         
-        <div className="container-responsive relative z-10 pt-32 pb-20">
+        {/* Minimalist hero content - just the heading at the bottom center */}
+        <div className="absolute bottom-40 left-0 right-0 z-10 px-4">
+          <h1 className="text-center text-white font-display font-bold text-5xl md:text-6xl lg:text-7xl tracking-wider leading-tight">
+            FIND YOUR ROOMMATE<br/>
+            IN NEW YORK CITY
+          </h1>
+        </div>
+      </section>
+      
+      {/* Original content section - visible when scrolling down */}
+      <section className="py-20 bg-light-50">
+        <div className="container-responsive">
           <div className="max-w-5xl mx-auto">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               <div>
@@ -52,9 +77,12 @@ export default function Home() {
                   Match with compatible roommates based on your lifestyle, preferences, and personality. The smart way to find your perfect living partner in New York City.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4">
-                  <Link href="/signup" className="btn-primary">
+                  <button 
+                    onClick={() => window.dispatchEvent(new CustomEvent('open-signup-modal'))}
+                    className="btn-primary"
+                  >
                     Get Started
-                  </Link>
+                  </button>
                 </div>
                 
                 {/* Stats */}
@@ -74,24 +102,24 @@ export default function Home() {
                 </div>
               </div>
               
-              <div className="hidden lg:block relative">
-                <div className="w-full aspect-[3/4] rounded-xl overflow-hidden relative">
+              <div className="relative">
+                <div className="w-full aspect-[3/4] rounded-xl overflow-hidden relative shadow-xl">
                   <Image src="/images/roommates-nyc.jpg" fill alt="Roommates in NYC" className="object-cover" />
                   
-                  {/* Subtle darkening at the bottom for text readability */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-light-900/30 to-transparent z-20"></div>
-                  
-                  <div className="absolute bottom-8 left-8 right-8 z-30">
+                  {/* Feature card overlay */}
+                  <div className="absolute bottom-8 left-8 right-8">
                     <div className="p-4 bg-white/90 backdrop-blur-md rounded-lg border border-light-300 shadow-md">
                       <div className="flex items-center gap-3 mb-2">
                         <div className="h-2 w-2 rounded-full bg-gold-500"></div>
-                        <p className="text-sm font-medium text-light-800">FEATURED MATCH</p>
+                        <span className="text-xs font-medium text-gold-500">FEATURED MATCH</span>
                       </div>
-                      <p className="text-lg font-semibold text-light-900">Upper East Side • $1,800-2,400</p>
-                      <div className="flex justify-between items-center mt-2">
-                        <div className="match-badge">92% Match</div>
-                        <Link href="/signup" className="text-gold-500 hover:text-gold-600 text-sm font-medium flex items-center transition-colors">
-                          View Profile <BsArrowRight className="ml-1" />
+                      <h3 className="text-lg font-bold text-light-900 mb-2">Upper East Side • $1,800-2,400</h3>
+                      <div className="flex justify-between items-center">
+                        <div className="text-sm text-gold-500 font-medium">92% Match</div>
+                        <Link href="/matches/1" className="text-sm text-teal-500 font-medium hover:underline flex items-center">
+                          View Profile <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1" viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
+                          </svg>
                         </Link>
                       </div>
                     </div>
@@ -101,6 +129,10 @@ export default function Home() {
             </div>
           </div>
         </div>
+      </section>
+      
+      {/* Featured Match Section - Similar to what was in the hero before */}
+      <section className="py-0 bg-light-50">
         
         {/* Scroll indicator */}
         <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-10 animate-bounce">
@@ -192,9 +224,12 @@ export default function Home() {
           </div>
           
           <div className="mt-16 text-center">
-            <Link href="/signup" className="btn-primary">
+            <button 
+              onClick={() => window.dispatchEvent(new CustomEvent('open-signup-modal'))}
+              className="btn-primary"
+            >
               Get Started Now
-            </Link>
+            </button>
           </div>
         </div>
       </section>
@@ -295,12 +330,12 @@ export default function Home() {
             <p className="text-xl text-light-700 mb-10">
               Join thousands of New Yorkers who have found their perfect roommate match with HeyRoomie.
             </p>
-            <Link 
-              href="/signup" 
+            <button 
+              onClick={() => window.dispatchEvent(new CustomEvent('open-signup-modal'))}
               className="btn-primary text-lg px-10 py-4"
             >
               Get Started Today
-            </Link>
+            </button>
           </div>
         </div>
       </section>
@@ -319,7 +354,7 @@ export default function Home() {
             <div className="flex gap-6">
               <Link href="/" className="nav-link">Home</Link>
               <Link href="/how-it-works" className="nav-link">How It Works</Link>
-              <Link href="/contact" className="nav-link">Contact</Link>
+              <Link href="/contact" className="nav-link">CONTACT</Link>
             </div>
           </div>
           

@@ -38,27 +38,30 @@ export default function Navbar() {
     return pathname === path ? 'text-gold-500 font-semibold' : 'nav-link';
   };
 
+  // Determine if text should be white (only on home page before scrolling)
+  const shouldUseWhiteText = isHomePage && !scrolled;
+  
   return (
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'bg-light-50/95 backdrop-blur-sm py-3 shadow-sm' : 'bg-transparent py-6'}`}>
       <div className="container-responsive">
         <div className="flex justify-between items-center">
-          {/* Logo */}
-          <Link href="/" className="font-display text-3xl text-light-900 hover:text-gold-500 transition-colors duration-200 tracking-wide font-bold">
+          {/* Logo - white on landing page before scroll, otherwise dark */}
+          <Link href="/" className={`font-display text-3xl transition-colors duration-200 tracking-wide font-bold ${shouldUseWhiteText ? 'text-white hover:text-gold-200' : 'text-light-900 hover:text-gold-500'}`}>
             HEYROOMIE
           </Link>
 
           {/* Desktop navigation */}
           <div className="hidden md:flex items-center space-x-8">
             {/* How It Works removed */}
-            <Link href="/contact" className={isActive('/contact')}>
-              Contact
+            <Link href="/contact" className={shouldUseWhiteText ? 'text-white hover:text-gold-200 transition-colors' : isActive('/contact')}>
+              CONTACT
             </Link>
             
             {session ? (
               <div className="flex items-center space-x-4">
                 <div className="relative group">
-                  <button className="flex items-center nav-link">
-                    <span className="mr-1">My Account</span>
+                  <button className={`flex items-center ${shouldUseWhiteText ? 'text-white hover:text-gold-200' : 'nav-link'}`}>
+                    <span className="mr-1">MY ACCOUNT</span>
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                     </svg>
@@ -87,18 +90,30 @@ export default function Navbar() {
                 {isHomePage ? (
                   <button 
                     onClick={() => window.dispatchEvent(new CustomEvent('open-login-modal'))}
-                    className="nav-link bg-transparent border-0 cursor-pointer"
+                    className={`bg-transparent border-0 cursor-pointer ${shouldUseWhiteText ? 'text-white hover:text-gold-200' : 'nav-link'}`}
                   >
-                    Login
+                    LOGIN
                   </button>
                 ) : (
                   <Link href="/login" className="nav-link">
-                    Login
+                    LOGIN
                   </Link>
                 )}
-                <Link href="/signup" className="btn-primary">
-                  Sign Up
-                </Link>
+                {isHomePage ? (
+                  <button 
+                    onClick={() => window.dispatchEvent(new CustomEvent('open-signup-modal'))}
+                    className="btn-primary"
+                  >
+                    Sign Up
+                  </button>
+                ) : (
+                  <button 
+                    onClick={() => window.dispatchEvent(new CustomEvent('open-signup-modal'))}
+                    className="btn-primary"
+                  >
+                    Sign Up
+                  </button>
+                )}
               </div>
             )}
           </div>
@@ -107,7 +122,7 @@ export default function Navbar() {
           <div className="md:hidden">
             <button
               type="button"
-              className="text-light-900"
+              className={shouldUseWhiteText ? 'text-white' : 'text-light-900'}
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             >
               {mobileMenuOpen ? (
@@ -130,7 +145,7 @@ export default function Navbar() {
           <div className="container-responsive py-6 flex flex-col space-y-4">
             {/* How It Works removed */}
             <Link href="/contact" className="nav-link py-2">
-              Contact
+              CONTACT
             </Link>
             
             {session ? (
@@ -167,9 +182,15 @@ export default function Navbar() {
                     Login
                   </Link>
                 )}
-                <Link href="/signup" className="btn-primary w-full text-center mt-2">
+                <button 
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    window.dispatchEvent(new CustomEvent('open-signup-modal'));
+                  }}
+                  className="btn-primary w-full text-center"
+                >
                   Sign Up
-                </Link>
+                </button>
               </>
             )}
           </div>

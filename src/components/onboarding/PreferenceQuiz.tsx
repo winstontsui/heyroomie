@@ -481,8 +481,7 @@ export default function PreferenceQuiz({ onComplete }: PreferenceQuizProps) {
             ))}
           </div>
         );
-        
-      case 'emoji-scale':
+              case 'emoji-scale':
         return (
           <div className="space-y-4">
             <div className="grid grid-cols-5 gap-2 mb-6">
