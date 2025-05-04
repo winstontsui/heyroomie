@@ -2,9 +2,6 @@
 
 A modern web application for matching young professionals looking for roommates in NYC based on lifestyle preferences and compatibility.
 
-## 🚀 Quick Start
-
-Follow these steps to run the project locally:
 
 1. **Install Dependencies**
    ```bash
@@ -66,12 +63,13 @@ Follow these steps to run the project locally:
 └── .env.local                    # Environment variables
 ```
 
-## 🧩 Core Features
+## Features
 
 ### 1. Landing Page (`/src/app/page.tsx`)
-- Modern, responsive homepage with feature sections
-- Call-to-action buttons for sign-up and login
+- Modern, responsive homepage with light theme and gold-to-teal gradients
+- Engaging call-to-action buttons for sign-up and login
 - Information about the roommate matching process
+- Visually appealing UI with consistent design elements
 
 ### 2. Authentication System
 
@@ -92,13 +90,14 @@ Follow these steps to run the project locally:
 ### 3. User Profile & Preferences (`/src/app/profile/page.tsx`)
 
 **Files:**
-- `/src/app/profile/page.tsx` - Profile form UI
-- `/src/app/api/profile/route.ts` - Profile API endpoints
+- `/src/app/profile/page.tsx` - Enhanced profile form UI with improved validation
+- `/src/app/api/profile/route.ts` - Profile API endpoints with user-friendly error handling
 - `/src/models/User.ts` - User model with preference fields
+- `/src/components/onboarding/PreferenceQuiz.tsx` - Interactive onboarding quiz for new users
 
 **Form Sections:**
 - Personal Information (name, age, gender, occupation, bio)
-- Location & Budget (neighborhood, budget range)
+- Location & Budget (neighborhood selection with images, budget range)
 - Living Preferences:
   - Sleep Schedule (early bird, night owl, flexible)
   - Cleanliness (1-5 scale)
@@ -144,6 +143,18 @@ Follow these steps to run the project locally:
 - Responsive navigation with mobile menu
 - Context-aware links (different for logged in/out users)
 - Persistent authentication state across pages
+
+## 🚀 Recent Updates
+
+- **Enhanced Quiz Functionality**: Added questions for name, age, occupation, and gender
+- **Improved Neighborhood Selection**: Now allows only one choice with visual neighborhood options
+- **Redesigned UI**: Switched from dark theme to light theme with gold-to-teal gradients
+- **Profile Enhancements**: Improved profile page with better validation and error handling
+- **User Onboarding**: Streamlined signup process with automatic login and quiz redirection
+- **Error Handling**: Implemented user-friendly error messages during profile validation
+- **Visual Improvements**: Added neighborhood images for better visual engagement
+- **Automatic Profile Update**: Quiz responses automatically save to user profile
+- **Code Optimization**: Fixed JSX structure issues and improved code organization
 
 ## 🔐 Authentication Flow
 
@@ -236,7 +247,7 @@ The overall compatibility is calculated as a weighted average of all categories.
 }
 ```
 
-## 🚀 Deployment
+## Deployment
 
 This app can be deployed to Vercel or other Next.js-friendly platforms:
 
@@ -260,7 +271,7 @@ This app can be deployed to Vercel or other Next.js-friendly platforms:
 - **NextAuth.js**: Authentication for Next.js
 - **bcryptjs**: Password hashing
 
-## 📝 Final Project Requirements
+## Final Project Requirements
 
 This project meets the following requirements:
 

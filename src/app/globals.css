@@ -1,37 +1,132 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-rgb: 255, 255, 255;
+  /* Light theme colors */
+  --light-50: #ffffff;
+  --light-100: #f9fafb;
+  --light-200: #f3f4f6;
+  --light-300: #e5e7eb;
+  --light-400: #d1d5db;
+  --light-500: #9ca3af;
+  --light-600: #6b7280;
+  --light-700: #4b5563;
+  --light-800: #374151;
+  --light-900: #1f2937;
+
+  /* Gold accent colors */
+  --gold-400: #fcd34d;
+  --gold-500: #f59e0b;
+  --gold-600: #d97706;
+
+  /* Teal accent colors */
+  --teal-400: #2dd4bf;
+  --teal-500: #14b8a6;
+  --teal-600: #0d9488;
 }
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: rgb(var(--background-rgb));
-  min-height: 100vh;
-  font-family: 'Inter', sans-serif;
+@layer base {
+  body {
+    @apply bg-light-50 text-light-900 font-sans;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display;
+  }
 }
 
 @layer components {
-  .btn-primary {
-    @apply bg-primary-600 text-white px-4 py-2 rounded-md hover:bg-primary-700 transition-colors duration-200;
-  }
-  
-  .btn-secondary {
-    @apply bg-secondary-200 text-secondary-800 px-4 py-2 rounded-md hover:bg-secondary-300 transition-colors duration-200;
-  }
-  
-  .input-field {
-    @apply w-full px-3 py-2 border border-secondary-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500;
-  }
-  
-  .card {
-    @apply bg-white p-6 rounded-xl shadow-md;
-  }
-  
+  /* Container with responsive padding */
   .container-responsive {
     @apply container mx-auto px-4 sm:px-6 lg:px-8;
   }
+  
+  /* Typography */
+  .hero-heading {
+    @apply font-display text-6xl md:text-7xl lg:text-8xl uppercase leading-none tracking-tight text-light-900;
+  }
+  
+  .section-heading {
+    @apply font-display text-3xl md:text-4xl font-bold mb-6 uppercase text-light-900;
+  }
+  
+  .gradient-text {
+    @apply text-transparent bg-clip-text bg-gradient-to-r from-gold-500 to-teal-500 inline-block;
+  }
+  
+  /* Navigation */
+  .nav-link {
+    @apply text-light-800 hover:text-light-900 transition-colors duration-200 text-sm uppercase tracking-wider font-medium;
+  }
+  
+  /* Cards */
+  .card {
+    @apply bg-white border border-light-300 rounded-xl p-6 shadow-sm transition-all duration-300;
+  }
+  
+  /* Buttons */
+  .btn-primary {
+    @apply bg-gold-500 hover:bg-gold-400 text-white font-semibold py-3 px-6 rounded-md transition-all duration-300 inline-block;
+  }
+  
+  .btn-secondary {
+    @apply bg-light-200 border border-light-300 hover:border-gold-500 text-light-900 py-3 px-6 rounded-md font-medium transition-all duration-300 inline-block;
+  }
+  
+  /* Feature cards */
+  .feature-card {
+    @apply flex flex-col p-6 rounded-xl;
+  }
+  
+  .feature-icon {
+    @apply w-12 h-12 rounded-lg flex items-center justify-center mb-4;
+  }
+  
+  /* Match badge */
+  .match-badge {
+    @apply inline-block py-1 px-3 bg-gradient-to-r from-gold-500/20 to-teal-500/20 text-gold-600 font-medium text-sm rounded-full;
+  }
+  
+  /* Form elements */
+  .form-input {
+    @apply rounded-md border border-light-300 bg-white px-4 py-3 w-full focus:outline-none focus:ring-2 focus:ring-gold-500 focus:border-transparent text-light-900;
+  }
+  
+  .form-label {
+    @apply block text-sm font-medium text-light-700 mb-2;
+  }
+  
+  .form-error {
+    @apply text-red-500 text-sm mt-1;
+  }
+  
+  .form-select {
+    @apply rounded-md border border-light-300 bg-white px-4 py-3 w-full focus:outline-none focus:ring-2 focus:ring-gold-500 focus:border-transparent text-light-900;
+  }
+  
+  .form-checkbox {
+    @apply rounded border-light-300 text-gold-500 focus:ring-gold-500 bg-white;
+  }
+  
+  .form-radio {
+    @apply border-light-300 text-gold-500 focus:ring-gold-500 bg-white;
+  }
+}
+
+/* Custom animations */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin 8s linear infinite;
 }

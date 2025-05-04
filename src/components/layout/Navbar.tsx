@@ -1,112 +1,180 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { signOut, useSession } from 'next-auth/react';
-import { useState } from 'react';
+import { useState, useEffect, createContext, useContext } from 'react';
+
+// Create a context for the login modal
+export const LoginModalContext = createContext({
+  openLoginModal: () => {},
+});
 
 export default function Navbar() {
   const { data: session } = useSession();
   const pathname = usePathname();
+  const router = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  
+  // Check if we're on the home page to handle login differently
+  const isHomePage = pathname === '/';
+
+  // Handle scroll effect for transparent to solid background
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 10) {
+        setScrolled(true);
+      } else {
+        setScrolled(false);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const isActive = (path: string) => {
-    return pathname === path ? 'text-primary-600 font-semibold' : 'text-secondary-600 hover:text-primary-600';
+    return pathname === path ? 'text-gold-500 font-semibold' : 'nav-link';
   };
 
   return (
-    <nav className="bg-white shadow-sm">
-      <div className="container-responsive py-4">
+    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'bg-light-50/95 backdrop-blur-sm py-3 shadow-sm' : 'bg-transparent py-6'}`}>
+      <div className="container-responsive">
         <div className="flex justify-between items-center">
           {/* Logo */}
-          <Link href="/" className="text-2xl font-bold text-primary-600">
-            HeyRoomie
+          <Link href="/" className="font-display text-3xl text-light-900 hover:text-gold-500 transition-colors duration-200 tracking-wide font-bold">
+            HEYROOMIE
           </Link>
+
+          {/* Desktop navigation */}
+          <div className="hidden md:flex items-center space-x-8">
+            {/* How It Works removed */}
+            <Link href="/contact" className={isActive('/contact')}>
+              Contact
+            </Link>
+            
+            {session ? (
+              <div className="flex items-center space-x-4">
+                <div className="relative group">
+                  <button className="flex items-center nav-link">
+                    <span className="mr-1">My Account</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                  <div className="absolute right-0 mt-2 w-48 bg-light-50 rounded-md shadow-md border border-light-200 overflow-hidden z-10 opacity-0 scale-95 group-hover:opacity-100 group-hover:scale-100 transform transition-all duration-200 origin-top-right invisible group-hover:visible">
+                    <Link href="/dashboard" className="block px-4 py-3 text-light-800 hover:bg-light-100 text-sm">
+                      Dashboard
+                    </Link>
+                    <Link href="/profile" className="block px-4 py-3 text-light-800 hover:bg-light-100 text-sm">
+                      Edit Profile
+                    </Link>
+                    <Link href="/matches" className="block px-4 py-3 text-light-800 hover:bg-light-100 text-sm">
+                      View Matches
+                    </Link>
+                    <button 
+                      onClick={() => signOut({ callbackUrl: '/' })}
+                      className="block w-full text-left px-4 py-3 text-light-800 hover:bg-light-100 text-sm border-t border-light-300"
+                    >
+                      Sign Out
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="flex items-center space-x-4">
+                {isHomePage ? (
+                  <button 
+                    onClick={() => window.dispatchEvent(new CustomEvent('open-login-modal'))}
+                    className="nav-link bg-transparent border-0 cursor-pointer"
+                  >
+                    Login
+                  </button>
+                ) : (
+                  <Link href="/login" className="nav-link">
+                    Login
+                  </Link>
+                )}
+                <Link href="/signup" className="btn-primary">
+                  Sign Up
+                </Link>
+              </div>
+            )}
+          </div>
 
           {/* Mobile menu button */}
           <div className="md:hidden">
             <button
               type="button"
-              className="text-secondary-500 hover:text-secondary-700"
+              className="text-light-900"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
+              {mobileMenuOpen ? (
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              ) : (
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+              )}
             </button>
           </div>
+        </div>
+      </div>
 
-          {/* Desktop navigation */}
-          <div className="hidden md:flex items-center space-x-8">
-            <Link href="/" className={isActive('/')}>
-              Home
+      {/* Mobile navigation */}
+      {mobileMenuOpen && (
+        <div className="md:hidden bg-light-50 absolute top-full left-0 right-0 shadow-md border-t border-light-200">
+          <div className="container-responsive py-6 flex flex-col space-y-4">
+            {/* How It Works removed */}
+            <Link href="/contact" className="nav-link py-2">
+              Contact
             </Link>
             
             {session ? (
               <>
-                <Link href="/profile" className={isActive('/profile')}>
-                  Profile
+                <div className="h-px bg-dark-600 my-2"></div>
+                <Link href="/dashboard" className="nav-link py-2">
+                  Dashboard
                 </Link>
-                <Link href="/matches" className={isActive('/matches')}>
-                  Matches
+                <Link href="/profile" className="nav-link py-2">
+                  Edit Profile
+                </Link>
+                <Link href="/matches" className="nav-link py-2">
+                  View Matches
                 </Link>
                 <button
                   onClick={() => signOut({ callbackUrl: '/' })}
-                  className="btn-secondary text-sm py-1"
+                  className="text-left nav-link py-2"
                 >
                   Sign Out
                 </button>
               </>
             ) : (
               <>
-                <Link href="/login" className={isActive('/login')}>
-                  Login
-                </Link>
-                <Link href="/signup" className={isActive('/signup')}>
-                  <span className="btn-primary text-sm py-1">Sign Up</span>
+                <div className="h-px bg-dark-600 my-2"></div>
+                {isHomePage ? (
+                  <button 
+                    onClick={() => window.dispatchEvent(new CustomEvent('open-login-modal'))}
+                    className="nav-link py-2 bg-transparent border-0 cursor-pointer text-left w-full"
+                  >
+                    Login
+                  </button>
+                ) : (
+                  <Link href="/login" className="nav-link py-2">
+                    Login
+                  </Link>
+                )}
+                <Link href="/signup" className="btn-primary w-full text-center mt-2">
+                  Sign Up
                 </Link>
               </>
             )}
           </div>
         </div>
-
-        {/* Mobile navigation */}
-        {mobileMenuOpen && (
-          <div className="md:hidden mt-4 pt-4 border-t">
-            <div className="flex flex-col space-y-4">
-              <Link href="/" className={isActive('/')}>
-                Home
-              </Link>
-              
-              {session ? (
-                <>
-                  <Link href="/profile" className={isActive('/profile')}>
-                    Profile
-                  </Link>
-                  <Link href="/matches" className={isActive('/matches')}>
-                    Matches
-                  </Link>
-                  <button
-                    onClick={() => signOut({ callbackUrl: '/' })}
-                    className="btn-secondary text-sm py-1 w-min"
-                  >
-                    Sign Out
-                  </button>
-                </>
-              ) : (
-                <>
-                  <Link href="/login" className={isActive('/login')}>
-                    Login
-                  </Link>
-                  <Link href="/signup" className={isActive('/signup')}>
-                    <span className="btn-primary text-sm py-1">Sign Up</span>
-                  </Link>
-                </>
-              )}
-            </div>
-          </div>
-        )}
-      </div>
+      )}
     </nav>
   );
 }
