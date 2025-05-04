@@ -19,19 +19,50 @@ interface QuizState {
 }
 
 export function useQuizState(onComplete: (profileData: any) => void): QuizState {
-  const [currentStep, setCurrentStep] = useState(0);
+  // Initialize currentStep from localStorage or default to 0
+  const [currentStep, setCurrentStep] = useState(() => {
+    // Only run this code on the client side
+    if (typeof window !== 'undefined') {
+      const savedStep = localStorage.getItem('onboardingStep');
+      return savedStep ? parseInt(savedStep, 10) : 0;
+    }
+    return 0;
+  });
+  
   const [progress, setProgress] = useState(0);
   
-  // Initialize with default values
-  const [answers, setAnswers] = useState<Partial<IndexableQuizAnswers>>({
-    budget: { min: 1000, max: 2500 },
-    age: 25,
+  // Initialize answers from localStorage or use default values
+  const [answers, setAnswers] = useState<Partial<IndexableQuizAnswers>>(() => {
+    // Only run this code on the client side
+    if (typeof window !== 'undefined') {
+      const savedAnswers = localStorage.getItem('onboardingAnswers');
+      return savedAnswers ? JSON.parse(savedAnswers) : {
+        budget: { min: 1000, max: 2500 },
+        age: 25,
+      };
+    }
+    return {
+      budget: { min: 1000, max: 2500 },
+      age: 25,
+    };
   });
 
   // Calculate progress when current step changes
   useEffect(() => {
     setProgress(((currentStep) / (quizQuestions.length - 1)) * 100);
+    
+    // Save current step to localStorage
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('onboardingStep', currentStep.toString());
+    }
   }, [currentStep]);
+  
+  // Save answers to localStorage whenever they change
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('onboardingAnswers', JSON.stringify(answers));
+    }
+  }, [answers]);
 
   const handleNext = () => {
     const nextStep = currentStep + 1;
@@ -41,6 +72,13 @@ export function useQuizState(onComplete: (profileData: any) => void): QuizState 
     } else {
       // Quiz completed, format data and call onComplete
       const profileData = formatProfileData();
+      
+      // Clear localStorage data after successful completion
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('onboardingStep');
+        localStorage.removeItem('onboardingAnswers');
+      }
+      
       onComplete(profileData);
     }
   };
