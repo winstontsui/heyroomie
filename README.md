@@ -2,13 +2,20 @@
 
 A modern web application for matching young professionals looking for roommates in NYC based on lifestyle preferences and compatibility.
 
+1. **Install MongoDB**
+   ```bash
+   brew tap mongodb/brew
+   brew install mongodb-community
+   brew services start mongodb-community
+   ```
+   > **Note:** MongoDB must be installed and running locally before starting the application. The application uses Mongoose as an ODM but requires MongoDB to be installed separately.
 
-1. **Install Dependencies**
+2. **Install Dependencies**
    ```bash
    npm install
    ```
 
-2. **Set Up Environment Variables**
+3. **Set Up Environment Variables**
    A `.env.local` file has been created in the project root with the following variables:
    ```
    MONGODB_URI=mongodb+srv://<username>:<password>@<cluster>.mongodb.net/<database>
@@ -18,12 +25,12 @@ A modern web application for matching young professionals looking for roommates 
    
    > **Note:** You need to use a MongoDB Atlas connection string or a local MongoDB URI.
 
-3. **Start the Development Server**
+4. **Start the Development Server**
    ```bash
    npm run dev
    ```
 
-4. **Access the Application**
+5. **Access the Application**
    Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ## 📂 Project Structure
