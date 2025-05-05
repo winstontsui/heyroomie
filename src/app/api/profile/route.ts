@@ -31,12 +31,17 @@ export async function GET(req: NextRequest) {
     // Return user data without sensitive fields
     const userData = {
       name: user.name,
+      email: user.email, // Include email for display purposes
       bio: user.bio,
       age: user.age,
       gender: user.gender,
       occupation: user.occupation,
       neighborhood: user.neighborhood,
       profilePicture: user.profilePicture || 'default',
+      socialMedia: user.socialMedia || {
+        instagram: '',
+        linkedin: ''
+      },
       budget: user.budget,
       preferences: user.preferences,
     };
@@ -130,6 +135,14 @@ export async function POST(req: NextRequest) {
       // Keep the existing profile picture (do nothing)
     } else {
       user.set('profilePicture', 'default');
+    }
+    
+    // Update social media profiles
+    if (data.socialMedia) {
+      user.socialMedia = {
+        instagram: data.socialMedia.instagram || '',
+        linkedin: data.socialMedia.linkedin || ''
+      };
     }
 
     // Update budget

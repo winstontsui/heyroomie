@@ -10,11 +10,16 @@ import { FaMapMarkerAlt, FaBriefcase } from 'react-icons/fa';
 interface MatchUser {
   id: string;
   name: string;
+  email?: string;
   age?: number;
   occupation?: string;
   neighborhood?: string;
   bio?: string;
   profilePicture?: string;
+  socialMedia?: {
+    instagram?: string;
+    linkedin?: string;
+  };
   compatibility: {
     overallPercentage: number;
     categories: {

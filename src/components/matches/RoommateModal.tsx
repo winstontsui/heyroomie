@@ -1,18 +1,23 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { IoClose } from 'react-icons/io5';
-import { FaMapMarkerAlt, FaBriefcase, FaBirthdayCake } from 'react-icons/fa';
+import { FaMapMarkerAlt, FaBriefcase, FaBirthdayCake, FaEnvelope, FaInstagram, FaLinkedin } from 'react-icons/fa';
 import { BsCheckCircleFill } from 'react-icons/bs';
 
 interface MatchUser {
   id: string;
   name: string;
+  email?: string;
   age?: number;
   occupation?: string;
   neighborhood?: string;
   bio?: string;
   profilePicture?: string;
+  socialMedia?: {
+    instagram?: string;
+    linkedin?: string;
+  };
   compatibility: {
     overallPercentage: number;
     categories: {
@@ -33,6 +38,8 @@ interface RoommateModalProps {
 
 export default function RoommateModal({ match, isOpen, onClose }: RoommateModalProps) {
   const modalRef = useRef<HTMLDivElement>(null);
+  // State for map loading - always define hooks at the top level
+  const [mapLoaded, setMapLoaded] = useState(false);
 
   // Close modal when clicking outside
   useEffect(() => {
@@ -80,6 +87,16 @@ export default function RoommateModal({ match, isOpen, onClose }: RoommateModalP
       document.body.style.overflow = 'auto';
     };
   }, [isOpen]);
+  
+  // Load Google Maps embed when modal opens
+  useEffect(() => {
+    if (isOpen && match?.neighborhood) {
+      setMapLoaded(true);
+    } else if (!isOpen) {
+      // Reset map loaded state when modal closes
+      setMapLoaded(false);
+    }
+  }, [isOpen, match]);
 
   if (!isOpen || !match) return null;
 
@@ -103,7 +120,7 @@ export default function RoommateModal({ match, isOpen, onClose }: RoommateModalP
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50">
       <div 
         ref={modalRef}
-        className="bg-white rounded-xl shadow-xl w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col"
+        className="bg-white rounded-xl shadow-xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col"
       >
         {/* Header with close button */}
         <div className="flex justify-between items-center p-4 border-b border-gray-200">
@@ -132,53 +149,124 @@ export default function RoommateModal({ match, isOpen, onClose }: RoommateModalP
                 />
               </div>
 
-              <div className="bg-light-50 rounded-xl p-4 shadow-sm">
-                <h3 className="text-xl font-bold text-gray-800 mb-1">{match.name}</h3>
+              <div className="bg-light-50 rounded-xl p-4 shadow-sm mb-4">
+                <h3 className="text-lg font-semibold text-gray-800 mb-3">{match.name}</h3>
                 
-                {match.age && (
-                  <div className="flex items-center text-gray-600 mb-2">
-                    <FaBirthdayCake className="w-4 h-4 mr-2 text-gray-400" />
-                    <span>{match.age} years old</span>
-                  </div>
-                )}
-                
-                {match.occupation && (
-                  <div className="flex items-center text-gray-600 mb-2">
-                    <FaBriefcase className="w-4 h-4 mr-2 text-gray-400" />
-                    <span>{match.occupation}</span>
-                  </div>
-                )}
-                
-                {match.neighborhood && (
-                  <div className="flex items-center text-gray-600 mb-2">
-                    <FaMapMarkerAlt className="w-4 h-4 mr-2 text-gray-400" />
-                    <span>{match.neighborhood}</span>
-                  </div>
-                )}
-
-                <div className={`mt-4 inline-block px-3 py-1 rounded-full text-sm font-medium ${getCompatibilityColor(match.compatibility.overallPercentage)}`}>
-                  {match.compatibility.overallPercentage}% Match
+                <div className="space-y-3">
+                  {match.email && (
+                    <div className="flex items-center">
+                      <FaEnvelope className="w-5 h-5 text-gold-500 mr-3" />
+                      <a href={`mailto:${match.email}`} className="text-blue-600 hover:underline">{match.email}</a>
+                    </div>
+                  )}
+                  
+                  {match.age && (
+                    <div className="flex items-center">
+                      <FaBirthdayCake className="w-5 h-5 text-gold-500 mr-3" />
+                      <span className="text-gray-700">{match.age} years old</span>
+                    </div>
+                  )}
+                  
+                  {match.occupation && (
+                    <div className="flex items-center">
+                      <FaBriefcase className="w-5 h-5 text-gold-500 mr-3" />
+                      <span className="text-gray-700">{match.occupation}</span>
+                    </div>
+                  )}
+                  
+                  {match.neighborhood && (
+                    <div className="flex items-center">
+                      <FaMapMarkerAlt className="w-5 h-5 text-gold-500 mr-3" />
+                      <span className="text-gray-700">{match.neighborhood}</span>
+                    </div>
+                  )}
                 </div>
               </div>
-
-              <div className="mt-6">
-                <button className="btn-primary w-full py-3 text-base">
-                  Message {match.name.split(' ')[0]}
-                </button>
+              
+              {/* Social Media Links */}
+              {(match.socialMedia?.instagram || match.socialMedia?.linkedin) && (
+                <div className="bg-light-50 rounded-xl p-4 shadow-sm mb-4">
+                  <h3 className="text-md font-semibold text-gray-800 mb-3">Connect with {match.name}</h3>
+                  
+                  <div className="flex space-x-4">
+                    {match.socialMedia?.instagram && (
+                      <a 
+                        href={`https://instagram.com/${match.socialMedia.instagram}`} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="flex items-center text-pink-600 hover:text-pink-700"
+                      >
+                        <FaInstagram className="w-6 h-6" />
+                        <span className="ml-2 text-sm">Instagram</span>
+                      </a>
+                    )}
+                    
+                    {match.socialMedia?.linkedin && (
+                      <a 
+                        href={match.socialMedia.linkedin.includes('linkedin.com') 
+                          ? match.socialMedia.linkedin 
+                          : `https://linkedin.com/in/${match.socialMedia.linkedin}`}
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="flex items-center text-blue-600 hover:text-blue-700"
+                      >
+                        <FaLinkedin className="w-6 h-6" />
+                        <span className="ml-2 text-sm">LinkedIn</span>
+                      </a>
+                    )}
+                  </div>
+                </div>
+              )}
+              
+              <div className="bg-gold-50 rounded-xl p-4 shadow-sm">
+                <div className="flex items-center justify-center space-x-2 mb-3">
+                  <div className={`text-2xl font-bold ${getCompatibilityColor(match.compatibility.overallPercentage)}`}>
+                    {match.compatibility.overallPercentage}%
+                  </div>
+                  <div className="text-sm font-medium text-gray-700">Match</div>
+                </div>
               </div>
             </div>
-
-            {/* Right column - Bio and compatibility details */}
+            
+            {/* Right column - Bio, map and compatibility */}
             <div className="md:w-2/3">
               {/* Bio section */}
-              <div className="mb-6">
-                <h3 className="text-lg font-semibold text-gray-800 mb-2">About {match.name.split(' ')[0]}</h3>
+              <div className="bg-light-50 rounded-xl p-6 shadow-sm mb-6">
+                <h3 className="text-lg font-semibold text-gray-800 mb-3">About {match.name}</h3>
+                
                 {match.bio ? (
                   <p className="text-gray-600">{match.bio}</p>
                 ) : (
                   <p className="text-gray-500 italic">No bio provided</p>
                 )}
               </div>
+              
+              {/* Neighborhood Map */}
+              {match.neighborhood && (
+                <div className="bg-light-50 rounded-xl p-6 shadow-sm mb-6 overflow-hidden">
+                  <h3 className="text-lg font-semibold text-gray-800 mb-3">
+                    <FaMapMarkerAlt className="inline-block mr-2 text-gold-500" />
+                    Neighborhood
+                  </h3>
+                  
+                  <div className="rounded-lg overflow-hidden h-48 bg-gray-100">
+                    {mapLoaded ? (
+                      <iframe
+                        width="100%"
+                        height="100%"
+                        frameBorder="0"
+                        style={{ border: 0 }}
+                        src={`https://www.google.com/maps/embed/v1/place?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ''}&q=${encodeURIComponent(match.neighborhood)}`}
+                        allowFullScreen
+                      ></iframe>
+                    ) : (
+                      <div className="h-full flex items-center justify-center">
+                        <p className="text-gray-500">Loading map...</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
 
               {/* Compatibility breakdown */}
               <div className="bg-light-50 rounded-xl p-6 shadow-sm">

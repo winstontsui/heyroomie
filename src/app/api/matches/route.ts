@@ -311,11 +311,16 @@ export async function GET(req: NextRequest) {
       return {
         id: match._id,
         name: match.name,
+        email: match.email,
         age: match.age,
         occupation: match.occupation,
         neighborhood: match.neighborhood,
         bio: match.bio,
         profilePicture: match.profilePicture || 'default',
+        socialMedia: match.socialMedia || {
+          instagram: '',
+          linkedin: ''
+        },
         compatibility,
       };
     });

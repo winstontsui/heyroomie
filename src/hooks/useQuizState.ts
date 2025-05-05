@@ -126,6 +126,9 @@ export function useQuizState(onComplete: (profileData: any) => void): QuizState 
     
     if (!currentQuestion.key) return true; // Intro or completion slide
     
+    // If the question is marked as optional, always allow proceeding
+    if (currentQuestion.isOptional) return true;
+    
     // Type guard to check if the key exists in our answers object
     const answerValue = answers[currentQuestion.key];
     
@@ -138,6 +141,8 @@ export function useQuizState(onComplete: (profileData: any) => void): QuizState 
       case 'yes-no':
       case 'emoji-scale':
       case 'slider':
+        return true;
+      case 'profile-picture': // Profile pictures are always optional
         return true;
       default:
         return true;
@@ -158,6 +163,12 @@ export function useQuizState(onComplete: (profileData: any) => void): QuizState 
         opt => opt.value === answers.neighborhood
       )?.label || answers.neighborhood : '';
 
+    // Format social media data
+    const socialMedia = {
+      instagram: answers.instagram || '',
+      linkedin: answers.linkedin || '',
+    };
+    
     // Return a clean object with profile data, nesting preferences appropriately
     return {
       name: answers.name || '',
@@ -167,6 +178,7 @@ export function useQuizState(onComplete: (profileData: any) => void): QuizState 
       occupation: answers.occupation || '',
       budget: formattedBudget,
       neighborhood: neighborhoodLabel,
+      socialMedia: socialMedia,
       preferences: {
         sleepSchedule: answers.sleepSchedule || '',
         cleanliness: answers.cleanliness || '',

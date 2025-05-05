@@ -44,6 +44,8 @@ export interface QuizAnswers {
   noise?: string;
   bio?: string;
   profilePicture?: string;
+  instagram?: string;
+  linkedin?: string;
 }
 
 // Quiz questions with fun, interactive elements
@@ -54,15 +56,6 @@ export const quizQuestions: QuizQuestion[] = [
     title: 'Welcome to HeyRoomie!',
     description: 'Let\'s find your perfect roommate match. This quick quiz will help us understand your preferences.',
     buttonText: 'Get Started',
-  },
-  {
-    id: 'name',
-    type: 'text-input',
-    title: 'What\'s your name?',
-    description: 'We\'ll use this to personalize your profile',
-    placeholder: 'Your full name',
-    key: 'name',
-    maxLength: 50,
   },
   {
     id: 'age',
@@ -208,6 +201,33 @@ export const quizQuestions: QuizQuestion[] = [
     placeholder: "I'm a marketing professional who loves cooking, film, and weekend hikes. Looking for a friendly, respectful roommate who enjoys occasional movie nights but also values quiet time.",
     key: 'bio',
     maxLength: 400,
+  },
+  {
+    id: 'social-media',
+    type: 'welcome',
+    title: 'Connect Your Social Media',
+    description: 'Adding your social profiles helps potential roommates learn more about you and builds trust. All fields are optional.',
+    buttonText: 'Continue',
+  },
+  {
+    id: 'instagram',
+    type: 'text-input',
+    title: 'Instagram Username',
+    description: 'Share your Instagram handle (optional)',
+    placeholder: 'username (without @)',
+    key: 'instagram',
+    maxLength: 30,
+    isOptional: true,
+  },
+  {
+    id: 'linkedin',
+    type: 'text-input',
+    title: 'LinkedIn Profile',
+    description: 'Add your LinkedIn profile (optional)',
+    placeholder: 'username or full URL',
+    key: 'linkedin',
+    maxLength: 100,
+    isOptional: true,
   },
   {
     id: 'profile-picture',

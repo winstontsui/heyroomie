@@ -13,6 +13,10 @@ export interface IUser extends Document {
   profilePicture?: string;
   profilePictureData?: string; // Base64 encoded image data
   profilePictureType?: string; // MIME type of the image
+  socialMedia?: {
+    instagram?: string;
+    linkedin?: string;
+  };
   budget?: {
     min: number;
     max: number;
@@ -83,6 +87,16 @@ const UserSchema: Schema = new Schema(
     profilePictureType: {
       type: String, // MIME type of the image
       default: 'image/png',
+    },
+    socialMedia: {
+      instagram: {
+        type: String,
+        trim: true,
+      },
+      linkedin: {
+        type: String,
+        trim: true,
+      },
     },
     budget: {
       min: {
