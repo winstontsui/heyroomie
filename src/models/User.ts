@@ -1,5 +1,6 @@
 import mongoose, { Schema, Document } from 'mongoose';
 import bcrypt from 'bcryptjs';
+import { generateEmbedding } from '../lib/embeddings';
 
 export interface IUser extends Document {
   name: string;
@@ -155,6 +156,32 @@ UserSchema.pre('save', async function (next) {
     next();
   } catch (error: any) {
     next(error);
+  }
+});
+
+// Generate embedding after saving
+UserSchema.post('save', async function(doc) {
+  try {
+    if (doc.preferences) {
+      const { vector, text } = await generateEmbedding(doc.preferences);
+      
+      // Update or create embedding in the Embeddings collection
+      await mongoose.model('Embedding').findOneAndUpdate(
+        { email: doc.email },
+        {
+          email: doc.email,
+          vector,
+          metadata: {
+            dimensions: vector.length,
+            lastUpdated: new Date(),
+            generatedText: text
+          }
+        },
+        { upsert: true, new: true }
+      );
+    }
+  } catch (error) {
+    console.error('Error generating embedding:', error);
   }
 });
 
