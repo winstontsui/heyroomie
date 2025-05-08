@@ -150,6 +150,54 @@ A modern web application for matching young professionals looking for roommates 
 - Opposite preferences get minimal points
 - Weighted scoring prioritizes important factors
 
+**Vector Similarity and MongoDB Vector Search:**
+The algorithm in `/src/app/api/matches/route.ts` uses vector similarity (cosine similarity) and MongoDB's vector search capabilities to calculate compatibility scores. Each user's preferences are converted into a normalized vector representation, allowing for efficient similarity calculations.
+
+### Vector Representation
+User preferences are converted into normalized vectors where each dimension represents a different preference category:
+- Lifestyle preferences (sleep schedule, cleanliness, etc.)
+- Location preferences
+- Budget range
+- Personality traits
+- Other compatibility factors
+
+### Similarity Calculation
+The matching algorithm uses cosine similarity to calculate the similarity between users' preference vectors:
+- Cosine similarity ranges from -1 to 1, where:
+  - 1 indicates perfect alignment
+  - 0 indicates no correlation
+  - -1 indicates complete opposition
+- The final compatibility score is normalized to a 0-100 scale for user-friendly display
+
+### MongoDB Vector Search
+The application leverages MongoDB's vector search capabilities to:
+- Efficiently store and index user preference vectors
+- Perform fast similarity searches across the user database
+- Scale matching operations as the user base grows
+
+The algorithm calculates scores for different compatibility dimensions:
+
+1. **Lifestyle Compatibility (100 points possible)**
+   - Sleep schedule (20 points)
+   - Smoking preferences (15 points)
+   - Drinking habits (10 points)
+   - Pet preferences (10 points)
+   - Noise tolerance (15 points)
+   - Guest frequency (10 points)
+   - Cleanliness (20 points)
+
+2. **Location Compatibility (100 points possible)**
+   - Same neighborhood (100 points)
+   - Different neighborhood (50 points)
+
+3. **Financial Compatibility (100 points possible)**
+   - Budget range overlap (0-100 points, proportional to overlap)
+
+4. **Personality Compatibility (50 points possible)**
+   - Age difference (50 points for close ages, scaled down for larger gaps)
+
+The overall compatibility is calculated as a weighted average of all categories.
+
 ### 5. Matches Display Page (`/src/app/matches/page.tsx`)
 
 **Features:**
@@ -209,7 +257,31 @@ A modern web application for matching young professionals looking for roommates 
 
 ## 🧠 Matching Algorithm Details
 
-The algorithm in `/src/app/api/matches/route.ts` calculates scores for different compatibility dimensions:
+The algorithm in `/src/app/api/matches/route.ts` uses vector similarity (cosine similarity) and MongoDB's vector search capabilities to calculate compatibility scores. Each user's preferences are converted into a normalized vector representation, allowing for efficient similarity calculations.
+
+### Vector Representation
+User preferences are converted into normalized vectors where each dimension represents a different preference category:
+- Lifestyle preferences (sleep schedule, cleanliness, etc.)
+- Location preferences
+- Budget range
+- Personality traits
+- Other compatibility factors
+
+### Similarity Calculation
+The matching algorithm uses cosine similarity to calculate the similarity between users' preference vectors:
+- Cosine similarity ranges from -1 to 1, where:
+  - 1 indicates perfect alignment
+  - 0 indicates no correlation
+  - -1 indicates complete opposition
+- The final compatibility score is normalized to a 0-100 scale for user-friendly display
+
+### MongoDB Vector Search
+The application leverages MongoDB's vector search capabilities to:
+- Efficiently store and index user preference vectors
+- Perform fast similarity searches across the user database
+- Scale matching operations as the user base grows
+
+The algorithm calculates scores for different compatibility dimensions:
 
 1. **Lifestyle Compatibility (100 points possible)**
    - Sleep schedule (20 points)
