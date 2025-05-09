@@ -331,9 +331,3 @@ Possible improvements to consider:
 5. **Social Login** - Add Google, Facebook login options
 
 
-**Files:**
-- `/src/app/api/upload/profile-picture/route.ts` - Handles profile picture uploads
-- `/src/app/api/profile-picture/[id]/route.ts` - Serves profile pictures from MongoDB
-- `/src/components/profile/ProfilePictureUpload.tsx` - UI component for image uploads
-- `/src/app/matches/page.tsx` - Redesigned matches page with profile pictures
-- `/src/components/matches/RoommateModal.tsx` - New interactive modal component
