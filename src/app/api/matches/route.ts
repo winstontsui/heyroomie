@@ -303,19 +303,9 @@ export async function GET(req: NextRequest) {
       preferences: { $exists: true, $ne: null }, // Must have preferences
       budget: { $exists: true, $ne: null }, // Must have budget
     });
-
-    // Helper: check if two budget ranges overlap
-    function budgetsOverlap(b1, b2) {
-      return Math.min(b1.max, b2.max) - Math.max(b1.min, b2.min) >= 0;
-    }
-
-    // Filter out users whose budget does not overlap
-    const filteredMatches = potentialMatches.filter(match =>
-      budgetsOverlap(currentUser.budget, match.budget)
-    );
-
+    
     // Calculate compatibility scores for each potential match
-    const matches = filteredMatches.map(match => {
+    const matches = potentialMatches.map(match => {
       const compatibility = calculateCompatibilityScore(currentUser, match);
       
       return {
