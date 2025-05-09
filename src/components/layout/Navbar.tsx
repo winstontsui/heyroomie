@@ -107,9 +107,6 @@ export default function Navbar() {
                     </svg>
                   </button>
                   <div className="absolute right-0 mt-2 w-48 bg-light-50 rounded-md shadow-md border border-light-200 overflow-hidden z-10 opacity-0 scale-95 group-hover:opacity-100 group-hover:scale-100 transform transition-all duration-200 origin-top-right invisible group-hover:visible">
-                    <Link href="/dashboard" className="block px-4 py-3 text-light-800 hover:bg-light-100 text-sm">
-                      Dashboard
-                    </Link>
                     <Link href="/profile" className="block px-4 py-3 text-light-800 hover:bg-light-100 text-sm">
                       Edit Profile
                     </Link>
