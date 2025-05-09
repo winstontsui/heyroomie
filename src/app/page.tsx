@@ -183,9 +183,9 @@ export default function Home() {
               <div className="feature-icon bg-gold-500/20">
                 <BsChatDotsFill className="w-6 h-6 text-gold-500" />
               </div>
-              <h3 className="text-xl font-bold mb-3 text-light-900">Secure Communication</h3>
+              <h3 className="text-xl font-bold mb-3 text-light-900">Connect With Matches</h3>
               <p className="text-light-600">
-                Connect and communicate securely with potential roommates within our platform.
+                Connect and communicate with your matches through social media handles.
               </p>
             </div>
 
