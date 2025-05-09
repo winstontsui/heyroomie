@@ -270,10 +270,7 @@ export default function Home() {
               &copy; {new Date().getFullYear()} HeyRoomie. All rights reserved.
             </p>
             
-            <div className="flex gap-4 mt-4 md:mt-0">
-              <Link href="/privacy" className="text-light-500 hover:text-light-700 text-sm transition-colors">Privacy Policy</Link>
-              <Link href="/terms" className="text-light-500 hover:text-light-700 text-sm transition-colors">Terms of Service</Link>
-            </div>
+        
           </div>
         </div>
       </footer>
