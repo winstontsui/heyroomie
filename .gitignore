@@ -42,3 +42,6 @@ coverage/
 
 # Misc
 *.log
+
+#untrack 
+pnpm-lock.yaml
