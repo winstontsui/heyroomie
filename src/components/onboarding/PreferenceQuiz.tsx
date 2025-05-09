@@ -108,50 +108,52 @@ export default function PreferenceQuiz({ onComplete }: PreferenceQuizProps) {
               <div className="mb-12 bg-white rounded-xl shadow-sm p-6 border border-light-200">
                 <div className="text-center mb-8">
                   <div className="text-4xl font-bold text-gold-500 mb-2">
-                    ${answers.budget?.min || 1000} - ${answers.budget?.max || 2500}
+                    ${answers.budget?.min ?? 1000} - ${answers.budget?.max ?? 2500}
                   </div>
                   <p className="text-light-600 text-sm">
-                    Drag the handles to set your budget range
+                    Enter your minimum and maximum budget
                   </p>
                 </div>
-                
-                <div className="relative pt-8 pb-4">
-                  <div className="h-2 bg-light-200 rounded-full">
-                    <div
-                      className="absolute h-2 bg-gold-500 rounded-full"
-                      style={{
-                        left: `${(question.min !== undefined && question.max !== undefined && answers.budget) ? 
-                          ((Number(answers.budget.min) - question.min) / (question.max - question.min)) * 100 : 0}%`,
-                        right: `${(question.min !== undefined && question.max !== undefined && answers.budget) ? 
-                          100 - ((Number(answers.budget.max) - question.min) / (question.max - question.min)) * 100 : 0}%`,
+
+                <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                  <div>
+                    <label className="block text-sm text-light-600 mb-1">Min Budget</label>
+                    <input
+                      type="number"
+                      min={question.min ?? 500}
+                      max={answers.budget?.max ?? (question.max ?? 5000)}
+                      step={question.step ?? 100}
+                      value={answers.budget?.min ?? 1000}
+                      onChange={e => {
+                        const min = Number(e.target.value);
+                        const max = answers.budget?.max ?? (question.max ?? 5000);
+                        handleChange('budget', { min: Math.min(min, max), max });
                       }}
-                    ></div>
+                      className="border rounded px-3 py-2 w-32 text-center"
+                    />
                   </div>
-                  
-                  <input
-                    type="range"
-                    min={question.min}
-                    max={question.max}
-                    step={question.step}
-                    value={answers.budget?.min || 1000}
-                    onChange={(e) => handleChange('budget', { min: parseInt(e.target.value), max: answers.budget?.max || 2500 })}
-                    className="absolute w-full top-7 appearance-none bg-transparent pointer-events-auto cursor-pointer"
-                  />
-                  
-                  <input
-                    type="range"
-                    min={question.min}
-                    max={question.max}
-                    step={question.step}
-                    value={answers.budget?.max || 2500}
-                    onChange={(e) => handleChange('budget', { min: answers.budget?.min || 1000, max: parseInt(e.target.value) })}
-                    className="absolute w-full top-7 appearance-none bg-transparent pointer-events-auto cursor-pointer"
-                  />
+                  <span className="text-lg font-bold text-light-600">to</span>
+                  <div>
+                    <label className="block text-sm text-light-600 mb-1">Max Budget</label>
+                    <input
+                      type="number"
+                      min={answers.budget?.min ?? (question.min ?? 500)}
+                      max={question.max ?? 5000}
+                      step={question.step ?? 100}
+                      value={answers.budget?.max ?? 2500}
+                      onChange={e => {
+                        const max = Number(e.target.value);
+                        const min = answers.budget?.min ?? (question.min ?? 500);
+                        handleChange('budget', { min, max: Math.max(max, min) });
+                      }}
+                      className="border rounded px-3 py-2 w-32 text-center"
+                    />
+                  </div>
                 </div>
-                
-                <div className="flex justify-between mt-2">
-                  <span className="text-sm text-light-600">${question.min}</span>
-                  <span className="text-sm text-light-600">${question.max}</span>
+
+                <div className="flex justify-between mt-4">
+                  <span className="text-sm text-light-600">${question.min ?? 500}</span>
+                  <span className="text-sm text-light-600">${question.max ?? 5000}</span>
                 </div>
               </div>
             </div>
