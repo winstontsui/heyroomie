@@ -100,7 +100,7 @@ export default function SignUp() {
 
         <div className="mt-8 bg-white p-8 rounded-xl border border-light-300 shadow-sm">
           {error && (
-            <div className=" p-3 bg-green-900/30 border border-red-500/50 text-red-400 rounded-md">
+            <div className="mb-6 p-3 bg-red-900/30 border border-red-500/50 text-red-400 rounded-md">
               {error}
             </div>
           )}
