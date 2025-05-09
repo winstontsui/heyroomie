@@ -5,6 +5,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { signOut, useSession } from 'next-auth/react';
 import { useState, useEffect, createContext, useContext } from 'react';
 import Image from 'next/image';
+import AvatarInitials from '@/components/AvatarInitials';
 
 // Create a context for the login modal
 export const LoginModalContext = createContext({
@@ -90,16 +91,19 @@ export default function Navbar() {
                 <div className="relative group">
                   <button className={`flex items-center ${shouldUseWhiteText ? 'text-white hover:text-gold-200' : 'nav-link'}`}>
                     {/* Profile Picture */}
-                    <div className="w-8 h-8 rounded-full overflow-hidden mr-2 border border-light-300">
-                      <img 
-                        src={profilePicture === 'default' ? '/images/defaults/default-avatar.svg' : `/api/profile-picture/${profilePicture}`}
-                        alt="Profile"
-                        className="w-full h-full object-cover"
-                        onError={(e) => {
-                          // Simple fallback
-                          e.currentTarget.src = '/images/defaults/default-avatar.svg';
-                        }}
-                      />
+                    <div className="w-8 h-8 rounded-full overflow-hidden mr-2 border border-light-300 bg-gold-500 flex items-center justify-center">
+                      {profilePicture === 'default' || !profilePicture ? (
+                        <AvatarInitials name={session.user?.name || 'User'} size={32} />
+                      ) : (
+                        <img
+                          src={`/api/profile-picture/${profilePicture}`}
+                          alt="Profile"
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            e.currentTarget.src = '/images/defaults/default-avatar.svg';
+                          }}
+                        />
+                      )}
                     </div>
                     <span className="mr-1">MY ACCOUNT</span>
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">

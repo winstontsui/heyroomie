@@ -142,98 +142,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* How It Works */}
-      <section className="py-24 bg-light-100">
-        <div className="container-responsive">
-          <div className="max-w-3xl mx-auto mb-16 text-center">
-            <h2 className="section-heading">
-              How It Works
-            </h2>
-            <p className="text-white/70 text-lg max-w-2xl mx-auto">
-              Our matching algorithm is designed to connect you with roommates who complement your lifestyle and preferences. 
-              Get started in three simple steps.
-            </p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {/* Step 1 */}
-            <div className="relative">
-              <div className="card border border-light-300 hover:border-gold-500 transition-colors duration-300 h-full flex flex-col">
-                <div className="absolute -top-5 -left-5 bg-gold-500 w-10 h-10 flex items-center justify-center rounded">
-                  <span className="text-black font-bold">1</span>
-                </div>
-                <div className="mb-6 text-gold-500">
-                  <AiOutlineUser className="h-8 w-8" />
-                </div>
-                <h3 className="text-xl font-bold uppercase mb-4">Create Your Profile</h3>
-                <p className="text-light-700 flex-grow">
-                  Sign up and complete your profile with your lifestyle preferences, budget range, and neighborhood choices.
-                </p>
-                <div className="mt-6 pt-6 border-t border-light-300">
-                  <div className="flex items-center gap-2">
-                    <div className="h-1.5 w-1.5 rounded-full bg-gold-500"></div>
-                    <span className="text-xs text-light-600">TAKES 5 MINUTES</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            {/* Step 2 */}
-            <div className="relative">
-              <div className="card border border-light-300 hover:border-gold-500 transition-colors duration-300 h-full flex flex-col">
-                <div className="absolute -top-5 -left-5 bg-gold-500 w-10 h-10 flex items-center justify-center rounded">
-                  <span className="text-black font-bold">2</span>
-                </div>
-                <div className="mb-6 text-teal-500">
-                  <AiOutlineCheckCircle className="h-8 w-8" />
-                </div>
-                <h3 className="text-xl font-bold uppercase mb-4">Get Matched</h3>
-                <p className="text-light-700 flex-grow">
-                  Our algorithm analyzes your preferences to find compatible roommates with similar lifestyles and values.
-                </p>
-                <div className="mt-6 pt-6 border-t border-light-300">
-                  <div className="flex items-center gap-2">
-                    <div className="h-1.5 w-1.5 rounded-full bg-teal-500"></div>
-                    <span className="text-xs text-light-600">INSTANT RESULTS</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            {/* Step 3 */}
-            <div className="relative">
-              <div className="card border border-light-300 hover:border-gold-500 transition-colors duration-300 h-full flex flex-col">
-                <div className="absolute -top-5 -left-5 bg-gold-500 w-10 h-10 flex items-center justify-center rounded">
-                  <span className="text-black font-bold">3</span>
-                </div>
-                <div className="mb-6 text-gold-500">
-                  <BsChatDots className="h-8 w-8" />
-                </div>
-                <h3 className="text-xl font-bold uppercase mb-4">Connect & Decide</h3>
-                <p className="text-light-700 flex-grow">
-                  Message your matches directly through our platform and find your perfect roommate match in NYC.
-                </p>
-                <div className="mt-6 pt-6 border-t border-light-300">
-                  <div className="flex items-center gap-2">
-                    <div className="h-1.5 w-1.5 rounded-full bg-gold-500"></div>
-                    <span className="text-xs text-light-600">SECURE MESSAGING</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          
-          <div className="mt-16 text-center">
-            <button 
-              onClick={() => window.dispatchEvent(new CustomEvent('open-signup-modal'))}
-              className="btn-primary"
-            >
-              Get Started Now
-            </button>
-          </div>
-        </div>
-      </section>
-
       {/* Features Section */}
       <section className="py-24 bg-light-100">
         <div className="container-responsive">
@@ -353,7 +261,6 @@ export default function Home() {
             
             <div className="flex gap-6">
               <Link href="/" className="nav-link">Home</Link>
-              <Link href="/how-it-works" className="nav-link">How It Works</Link>
               <Link href="/contact" className="nav-link">CONTACT</Link>
             </div>
           </div>
